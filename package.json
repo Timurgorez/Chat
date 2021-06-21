@@ -5,12 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "test": "cd client && npm run start",
     "heroku-postbuild": "cd client && npm install ==only=dev --no-shrinkwrap && npm run build"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "node": "^12.13.1",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
