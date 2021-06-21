@@ -3,17 +3,37 @@
  */
 
 
-const routesApi = require('./routes/routesApi');
-
-
+const path = require('path');
 const express = require('express');
 const socketIO = require("socket.io");
 const http = require('http');
+const cors = require('cors');
 
 const app = express();
 const server = http.createServer(app);
 
+const routesApi = require('./routes/routesApi');
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+const corsOptions = {
+  origin: function(origin, callback){
+    console.log('CORS CHECK', origin);
+    callback(null, true);
+  }
+};
+
+app.use(cors(corsOptions));
+
+
+if(process.env.NODE_ENV === 'production'){
+  app.use(express.static(path.join(__dirname, '../client/build')));
+  app.get('*', function (req, res) {
+    res.sendfile(path.join(__dirname, '../client/build', 'index.html'));
+  })
+}
+
 
 app.use("/api", routesApi);
 
@@ -86,5 +106,5 @@ io.on('connection', socket => {
 });
 
 
-
-server.listen(5000, (err) => console.log('Server is running!', err));
+const PORT = process.env.PORT || 8080;
+server.listen(PORT, (err) => console.log('Server is running!', err));
