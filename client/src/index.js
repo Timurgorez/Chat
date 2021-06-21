@@ -17,7 +17,7 @@ const store = createStore(rootReducer, compose(
     // thunk,
     //runAPImiddleware
   ),
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  // window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 ));
 
 ReactDOM.render(
