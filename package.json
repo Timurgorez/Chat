@@ -1,6 +1,10 @@
 {
   "name": "privat_chat",
   "version": "1.0.0",
+  "engines": {
+    "node": "^12.13.1",
+    "npm": "^6.12.1"
+  },
   "description": "chat",
   "main": "index.js",
   "scripts": {
