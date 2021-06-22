@@ -3,12 +3,15 @@ import {Container, Grid, Button, TextField, FormControl } from '@material-ui/cor
 import {useHistory, useParams} from "react-router";
 import toast from 'react-hot-toast';
 import {useDispatch, useSelector} from "react-redux";
+import {Link} from "react-router-dom";
+
 
 import './LiveChat.styles.scss';
 import socket from '../socket';
 import * as actionTypes from '../store/apiData/actionTypes';
 import Paper from "@material-ui/core/es/Paper/Paper";
-
+import Tooltip from "@material-ui/core/es/Tooltip/Tooltip";
+import CustomNotificationMsg from '../components/CustomNotificationMsg'
 
 
 function LiveChat() {
@@ -22,15 +25,7 @@ function LiveChat() {
   const messages = useSelector(state => state.api.messages);
   console.log('USERS', users);
 
-  // const [ loading, setLoading ] = useState(true);
   const [textMsg, setTextMsg] = useState('');
-  // const [ socket, setTextMsg ] = useState(null);
-  // const [ arrMsgs, setArrMsgs ] = useState([]);
-  // const [ color, setColor ] = useState('#' + Math.floor(Math.random()*16777215).toString(16));
-  // const [ error, setError ] = useState('');
-  // const [ invite, setInvite ] = useState(null);
-
-
 
   useEffect(() => {
 
@@ -39,29 +34,37 @@ function LiveChat() {
 
     socket.emit('ROOM:INIT_RUN', roomId);
     socket.on('ROOM:INIT_GET', data => {
-      console.log(data);
+      console.log('ROOM:INIT_GET', data);
       setUsers(data.users);
       setMessages(data.messages);
     });
 
     socket.on('ROOM:JOINED', data => {
-      console.log('NEW USER', data);
+      console.log('NEW room', data);
       toast.success('New user (' + data.newUser + ') is connected!');
-      setUsers(data.users);
+      setUsers( data.users );
     });
     socket.on('ROOM:NEW_MESSAGE', data => {
       console.log('NEW_MESSAGE', data);
-      toast.success('New message from (' + data.userName + ') !');
+
+      const audio = new Audio('/fb_chat_pop_sound.mp3');
+      audio.play();
       addMessage(data);
-      document.querySelector('#msgField').scrollTo({
-        top: 99999,
-        behavior: "smooth"
-      });
+      if(document.querySelector('#msgField')){
+        document.querySelector('#msgField').scrollTo({
+          top: 99999,
+          behavior: "smooth"
+        });
+        toast.success('New message from (' + data.userName + ') !');
+
+      }else{
+        toast.custom((t) => (<CustomNotificationMsg data={data} t={t} history={history} />));
+      }
     });
     socket.on('ROOM:LEAVE', data => {
       console.log('LEAVE USER', data);
       toast.success('User (' + data.leaveUser + ') is disconnected!');
-      setUsers(data.users);
+      setUsers( data.users );
     });
 
   }, []);
@@ -86,10 +89,14 @@ function LiveChat() {
     });
   };
 
-  const submitFormHandler = (e) => {
-    e.preventDefault();
+  const sendMsg = () => {
     if(!textMsg) return;
-    const obj = {userName, roomId, text: textMsg, date: (new Date()).toString() };
+    const obj = {
+      userName,
+      roomId,
+      text: textMsg,
+      date: (new Date()).toString()
+    };
     addMessage(obj);
     setTimeout(function () {
       document.querySelector('#msgField').scrollTo({
@@ -99,17 +106,31 @@ function LiveChat() {
     }, 100);
     socket.emit('ROOM:NEW_MESSAGE', obj);
     setTextMsg('');
+  }
+
+  const submitFormHandler = (e) => {
+    e.preventDefault();
+    sendMsg();
+  };
+  const submitFormByEnterHandler = (e) => {
+    if(e.key === 'Enter' && e.type === "keypress" && !e.shiftKey){
+      console.log('enter press here! ', e);
+      sendMsg();
+    }
   };
 
   return (
     <div className="live-chat">
+      {/*<Link to="/">Go to another Chat</Link>*/}
       <h1>Private Chat</h1>
       <Container maxWidth="md" className="live-chat__container">
         <Grid container spacing={3} className="wrap-block">
           <Grid item xs={4} className="users-block">
-            <h3>Online {users && users.length} users</h3>
+            <h3>{users && users.length} users in room {roomId} </h3>
             {users && users.map((el) => (
-              <p key={el}>{el}</p>
+              <p key={el.socketId}>{el.userName} : <Tooltip title={el.online ? "Online" : "Offline"} placement="bottom">
+                <span className={['user-status', el.online ? "online" : "offline"]}></span>
+              </Tooltip></p>
             ))}
           </Grid>
           <Grid item xs={8} className="messages-block">
@@ -136,10 +157,11 @@ function LiveChat() {
                     value={textMsg}
                     onChange={e => setTextMsg(e.target.value) }
                     variant="outlined"
+                    onKeyPress={submitFormByEnterHandler}
                     // disabled={error}
                   />
                 </FormControl>
-                <Button type="submit" variant="contained" color="secondary">
+                <Button type="submit" variant="contained" color="secondary" disabled={!textMsg}>
                   Send
                 </Button>
               </div>

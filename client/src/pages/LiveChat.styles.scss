@@ -16,7 +16,11 @@ div.msg-input{
 }
 .users-block{
   background: lightblue;
-
+  p{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 }
 .wrap-block{
   box-shadow: 0 0 10px rgba(0,0,0,0.5);
@@ -34,4 +38,16 @@ div.msg-input{
   display: inline-block;
   font-size: 12px;
 
+}
+.user-status{
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  &.online{
+    background: green;
+  }
+  &.offline{
+    background: red;
+  }
 }

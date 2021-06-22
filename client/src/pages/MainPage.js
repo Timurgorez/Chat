@@ -32,7 +32,7 @@ function MainPage() {
 
   const submitFormHandler = async (e) => {
     e.preventDefault();
-    if(roomId.trim() && userName.trim()){
+    if(roomId && userName){
       await axios.post('/rooms', {userName, roomId})
         .then(res => {
           console.log('POST', res.data);
@@ -69,7 +69,7 @@ function MainPage() {
                     label="Your name"
                     value={userName}
                     name="userName"
-                    onChange={e => setUserName(e.target.value)}
+                    onChange={e => setUserName(e.target.value.trim())}
                     variant="outlined"
                   />
                   <TextField
@@ -78,7 +78,7 @@ function MainPage() {
                     label="Room name"
                     name="roomId"
                     value={roomId}
-                    onChange={e => setRoomId(e.target.value)}
+                    onChange={e => setRoomId(e.target.value.trim())}
                     variant="outlined"
                   />
                 </FormControl>
