@@ -114,7 +114,6 @@ function LiveChat() {
   };
   const submitFormByEnterHandler = (e) => {
     if(e.key === 'Enter' && e.type === "keypress" && !e.shiftKey){
-      console.log('enter press here! ', e);
       sendMsg();
     }
   };
@@ -129,7 +128,7 @@ function LiveChat() {
             <h3>{users && users.length} users in room {roomId} </h3>
             {users && users.map((el) => (
               <p key={el.socketId}>{el.userName} : <Tooltip title={el.online ? "Online" : "Offline"} placement="bottom">
-                <span className={['user-status', el.online ? "online" : "offline"]}></span>
+                <span className={["user-status", el.online ? "online" : "offline"]}></span>
               </Tooltip></p>
             ))}
           </Grid>
@@ -158,7 +157,6 @@ function LiveChat() {
                     onChange={e => setTextMsg(e.target.value) }
                     variant="outlined"
                     onKeyPress={submitFormByEnterHandler}
-                    // disabled={error}
                   />
                 </FormControl>
                 <Button type="submit" variant="contained" color="secondary" disabled={!textMsg}>
