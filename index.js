@@ -45,6 +45,7 @@ const io = socketIO(server, {
 });
 
 io.on('connection', socket => {
+  console.log('USER CONNECTED', socket.id);
 
   socket.on('ROOM:INIT_RUN', roomId => {
     socket.emit('ROOM:INIT_GET', rooms[roomId] ? rooms[roomId] : null);
@@ -96,5 +97,5 @@ app.use("/", routesPages);
 
 
 const PORT = process.env.PORT || 8080;
-server.listen(PORT, (err) => console.log('Server is running!', err));
+server.listen(PORT, (err) => console.log('Server is running! -> '+ PORT, err));
 

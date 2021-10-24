@@ -4,6 +4,7 @@ import {BrowserRouter, Route, Switch, Redirect} from "react-router-dom";
 import './App.css';
 import MainPage from './pages/MainPage';
 import LiveChat from "./pages/LiveChat";
+import LiveChatNew from "./pages/LiveChatNew";
 
 function App() {
   return (
@@ -12,7 +13,7 @@ function App() {
         <Switch>
           <Route exact path="/" component={MainPage}/>
 
-          {/* <Route path="/chat" exact component={LiveChat} /> */}
+           {/*<Route path="/chat" exact component={LiveChatNew} />*/}
 
 
           <Route path="/room/:roomId/:userName" exact component={LiveChat}/>
